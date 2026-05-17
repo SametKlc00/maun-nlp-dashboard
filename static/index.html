@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sosyal Medya Analiz Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <link rel="stylesheet" href="/static/style.css?v=93">
+    <link rel="icon" type="image/png" href="/static/images/maun-logo.png">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<div id="updateModal" class="update-modal">
+    <div class="update-modal-card">
+        <button class="update-close-btn" onclick="closeUpdateModal()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="update-modal-icon">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+        </div>
+
+        <h2>Dashboard Güncellendi</h2>
+
+        <p>
+            Sosyal medya yorum analiz sistemi yeni modüllerle güçlendirildi.
+            Artık panel; duygu analizi, risk tespiti, kullanıcı davranışı, spam kontrolü,
+            nefret söylemi ve hayati risk analizlerini birlikte değerlendirebiliyor.
+        </p>
+
+        <div class="update-list">
+            <div>
+                <i class="fa-solid fa-heart-pulse"></i>
+                Hayati risk ve yaşam güvenliği analizi eklendi
+            </div>
+
+            <div>
+                <i class="fa-solid fa-scale-balanced"></i>
+                Nefret söylemi tespit modülü eklendi
+            </div>
+
+            <div>
+                <i class="fa-solid fa-calendar-days"></i>
+                Tarih aralığına göre yorum filtreleme eklendi
+            </div>
+
+            <div>
+                <i class="fa-solid fa-robot"></i>
+                Spam ve tekrar eden mesaj analizi geliştirildi
+            </div>
+
+            <div>
+                <i class="fa-solid fa-user-shield"></i>
+                Kullanıcı bazlı risk ve davranış analizi aktif
+            </div>
+
+            <div>
+                <i class="fa-brands fa-youtube"></i>
+                YouTube kanalından otomatik video ID çekme desteği eklendi
+            </div>
+
+            <div>
+                <i class="fa-solid fa-link"></i>
+                Yorumların kaynak bağlantısına doğrudan gitme özelliği aktif
+            </div>
+
+            <div>
+                <i class="fa-solid fa-brain"></i>
+                NLP kelime eşleşmeleri yanlış pozitifleri azaltacak şekilde iyileştirildi
+            </div>
+        </div>
+
+        <button class="btn btn-primary update-ok-btn" onclick="closeUpdateModal()">
+            <i class="fa-solid fa-check"></i>
+            Tamam, panele geç
+        </button>
+    </div>
+</div>
+
+<div class="app-shell">
+
+    <aside class="sidebar">
+        <div class="sidebar-top">
+
+            <div class="brand">
+                <div class="brand-logo">
+                    <img src="/static/images/maun-logo.png" alt="Muş Alparslan Üniversitesi Logosu">
+                </div>
+
+                <div class="brand-text">
+                    <h1>MAUN NLP Dashboard</h1>
+                    <p>Muş Alparslan Üniversitesi</p>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="nav-link">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Genel Bakış</span>
+                </a>
+
+                <a href="#api-settings" class="nav-link">
+                    <i class="fa-solid fa-plug-circle-bolt"></i>
+                    <span>API Entegrasyonları</span>
+                </a>
+
+                <a href="#risk-panel" class="nav-link">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>Risk Analizi</span>
+                </a>
+
+                <a href="#spam-panel" class="nav-link">
+                    <i class="fa-solid fa-robot"></i>
+                    <span>Spam Analizi</span>
+                </a>
+
+                <a href="#live-comments" class="nav-link">
+                    <i class="fa-solid fa-stream"></i>
+                    <span>Canlı Veri Akışı</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="source-card">
+            <div class="source-icon">
+                <i class="fa-solid fa-signal"></i>
+            </div>
+
+            <div>
+                <h3>Veri Kaynağı</h3>
+                <p id="sourceStatusText">Kontrol ediliyor...</p>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <div class="news-ticker">
+            <div class="ticker-label">
+                <i class="fa-solid fa-bullhorn"></i>
+                Güncelleme
+            </div>
+
+            <div class="ticker-track">
+                <div class="ticker-content">
+                    <span>Nefret söylemi analizi eklendi</span>
+                    <span>Hayati risk / yaşam güvenliği topic’i aktif</span>
+                    <span>İntihar, ölüm riski ve acil yardım ifadeleri ayrı analiz ediliyor</span>
+                    <span>Tarih aralığına göre yorum filtreleme eklendi</span>
+                    <span>Spam ve tekrar eden mesaj tespiti geliştirildi</span>
+                    <span>Kullanıcı bazlı risk analizi aktif</span>
+                    <span>YouTube kanalından otomatik video ID çekme desteği eklendi</span>
+                    <span>Yorum kaynak bağlantısı ile doğrudan ilgili yoruma gidilebiliyor</span>
+                    <span>NLP kelime eşleşmeleri yanlış pozitifleri azaltacak şekilde güncellendi</span>
+                    <span>Etiket, kelime ve risk grafikleri dashboard’a entegre edildi</span>
+                </div>
+            </div>
+        </div>
+
+        <section class="hero-section" id="dashboard">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>Gerçek Zamanlı İzleme</span>
+                </div>
+
+                <h2>NLP Tabanlı Sosyal Medya Yorum ve Risk Dashboard’u</h2>
+
+                <p>
+                    Sosyal medya platformlarından alınan yorumlar doğal dil işleme yöntemleriyle analiz edilir.
+                    Sistem yorumları duygu durumuna, risk seviyesine, konu etiketlerine, spam davranışına ve
+                    kullanıcı bazlı analizlere göre canlı bir yönetim panelinde görselleştirir.
+                </p>
+            </div>
+
+            <div class="hero-actions">
+                <button class="btn btn-primary" onclick="loadDashboard()">
+                    <i class="fa-solid fa-rotate"></i>
+                    <span>Paneli Yenile</span>
+                </button>
+
+                <button class="btn btn-secondary" onclick="addFakeComment()">
+                    <i class="fa-solid fa-vial"></i>
+                    <span>Test Yorumu</span>
+                </button>
+
+                <button class="btn btn-danger" onclick="clearComments()">
+                    <i class="fa-solid fa-trash-can"></i>
+                    <span>Verileri Temizle</span>
+                </button>
+            </div>
+        </section>
+
+        <section class="stats-grid">
+            <div class="stat-card stat-total">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-comments"></i>
+                </div>
+
+                <div>
+                    <span>Toplam Yorum</span>
+                    <strong id="total">0</strong>
+                </div>
+            </div>
+
+            <div class="stat-card stat-positive">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-face-smile"></i>
+                </div>
+
+                <div>
+                    <span>Olumlu</span>
+                    <strong id="positive">0</strong>
+                </div>
+            </div>
+
+            <div class="stat-card stat-negative">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-face-frown"></i>
+                </div>
+
+                <div>
+                    <span>Olumsuz</span>
+                    <strong id="negative">0</strong>
+                </div>
+            </div>
+
+            <div class="stat-card stat-neutral">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-face-meh"></i>
+                </div>
+
+                <div>
+                    <span>Nötr</span>
+                    <strong id="neutral">0</strong>
+                </div>
+            </div>
+
+            <div class="stat-card stat-risk">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+
+                <div>
+                    <span>Yüksek Risk</span>
+                    <strong id="highRisk">0</strong>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel summary-panel">
+            <div class="section-header compact">
+                <div>
+                    <span class="section-kicker">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        Otomatik Analiz Özeti
+                    </span>
+                    <h2>Genel Yorum Analizi</h2>
+                    <p id="analysisSummaryText">Analiz özeti hazırlanıyor...</p>
+                </div>
+            </div>
+
+            <div class="summary-metrics">
+                <div class="summary-metric">
+                    <span>Olumlu Oran</span>
+                    <strong id="summaryPositiveRate">0%</strong>
+                </div>
+
+                <div class="summary-metric">
+                    <span>Olumsuz Oran</span>
+                    <strong id="summaryNegativeRate">0%</strong>
+                </div>
+
+                <div class="summary-metric">
+                    <span>Nötr Oran</span>
+                    <strong id="summaryNeutralRate">0%</strong>
+                </div>
+
+                <div class="summary-metric risk">
+                    <span>Yüksek Risk Oranı</span>
+                    <strong id="summaryHighRiskRate">0%</strong>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel api-panel" id="api-settings">
+            <div class="section-header">
+                <div>
+                    <span class="section-kicker">
+                        <i class="fa-solid fa-sliders"></i>
+                        Bağlantı Yönetimi
+                    </span>
+                    <h2>API Entegrasyon Ayarları</h2>
+                    <p>
+                        Veri kaynaklarını etkinleştir, API bilgilerini gir ve yorum akışını dashboard üzerinden yönet.
+                    </p>
+                </div>
+
+                <button class="btn btn-primary" onclick="saveApiConfig()">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    <span>Ayarları Kaydet</span>
+                </button>
+            </div>
+
+            <div class="api-grid">
+
+                <div class="api-card youtube-card">
+                    <div class="api-card-header">
+                        <div class="api-title">
+                            <div class="api-icon youtube-icon">
+                                <i class="fa-brands fa-youtube"></i>
+                            </div>
+
+                            <label class="toggle-label">
+                                <input type="checkbox" id="useYoutube">
+                                <span>YouTube Data API</span>
+                            </label>
+                        </div>
+
+                        <span id="youtubeConfigured" class="status-dot">Kapalı</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="youtubeApiKey">API Key</label>
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-key"></i>
+                            <input type="password" id="youtubeApiKey" placeholder="YouTube API Key giriniz">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="youtubeVideoIds">Video ID Listesi</label>
+                        <textarea
+                            id="youtubeVideoIds"
+                            rows="4"
+                            placeholder="videoid1,videoid2,videoid3"
+                        ></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="youtubeChannelInput">YouTube Kanal ID / Handle</label>
+                        <div class="input-with-icon">
+                            <i class="fa-brands fa-youtube"></i>
+                            <input
+                                type="text"
+                                id="youtubeChannelInput"
+                                placeholder="@maunmedya veya UC... kanal ID"
+                                value="@maunmedya"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="two-col">
+                        <div class="form-group">
+                            <label for="youtubeChannelVideoLimit">Kanaldan Çekilecek Video</label>
+                            <input type="number" id="youtubeChannelVideoLimit" value="40">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Otomatik Kanal ID Çekme</label>
+
+                            <label class="toggle-label channel-toggle">
+                                <input type="checkbox" id="youtubeAutoFetchChannelVideos" checked>
+                                <span>Aktif</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button
+                        class="btn btn-secondary channel-fetch-btn"
+                        type="button"
+                        onclick="fetchYoutubeChannelVideos()"
+                    >
+                        <i class="fa-solid fa-cloud-arrow-down"></i>
+                        <span>Kanal Video ID’lerini Çek</span>
+                    </button>
+
+                    <div class="two-col">
+                        <div class="form-group">
+                            <label for="youtubePollSeconds">Kontrol Aralığı</label>
+                            <input type="number" id="youtubePollSeconds" value="60">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="youtubeMaxResults">Maksimum Yorum</label>
+                            <input type="number" id="youtubeMaxResults" value="100">
+                        </div>
+                    </div>
+
+                    <p class="hint">
+                        <i class="fa-solid fa-circle-info"></i>
+                        Herkese açık video yorumlarını toplamak ve analiz etmek için kullanılır.
+                    </p>
+                </div>
+
+                <div class="api-card x-card">
+                    <div class="api-card-header">
+                        <div class="api-title">
+                            <div class="api-icon x-icon">
+                                <i class="fa-brands fa-x-twitter"></i>
+                            </div>
+
+                            <label class="toggle-label">
+                                <input type="checkbox" id="useX">
+                                <span>X API</span>
+                            </label>
+                        </div>
+
+                        <span id="xConfigured" class="status-dot">Kapalı</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="xBearerToken">Bearer Token</label>
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" id="xBearerToken" placeholder="X Bearer Token giriniz">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="xSearchQuery">Arama Sorgusu</label>
+                        <textarea
+                            id="xSearchQuery"
+                            rows="4"
+                            placeholder="(to:musalparslanuni OR @musalparslanuni OR MAUN) lang:tr is:reply -is:retweet"
+                        ></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="xPollSeconds">Kontrol Aralığı</label>
+                        <input type="number" id="xPollSeconds" value="60">
+                    </div>
+
+                    <p class="hint">
+                        <i class="fa-solid fa-circle-info"></i>
+                        Arama sorgusuna uyan herkese açık gönderileri çekmek için tasarlanmıştır.
+                    </p>
+                </div>
+
+                <div class="api-card instagram-card">
+                    <div class="api-card-header">
+                        <div class="api-title">
+                            <div class="api-icon instagram-icon">
+                                <i class="fa-brands fa-instagram"></i>
+                            </div>
+
+                            <label class="toggle-label">
+                                <input type="checkbox" id="useInstagram">
+                                <span>Instagram Graph API</span>
+                            </label>
+                        </div>
+
+                        <span id="instagramConfigured" class="status-dot">Kapalı</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="instagramAccessToken">Access Token</label>
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-fingerprint"></i>
+                            <input
+                                type="password"
+                                id="instagramAccessToken"
+                                placeholder="Instagram Access Token giriniz"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="instagramMediaIds">Media ID Listesi</label>
+                        <textarea
+                            id="instagramMediaIds"
+                            rows="4"
+                            placeholder="mediaid1,mediaid2"
+                        ></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="instagramPollSeconds">Kontrol Aralığı</label>
+                        <input type="number" id="instagramPollSeconds" value="60">
+                    </div>
+
+                    <p class="hint">
+                        <i class="fa-solid fa-circle-info"></i>
+                        Profesyonel hesap, Graph API erişimi ve gerekli izinler ile kullanılabilir.
+                    </p>
+                </div>
+
+                <div class="api-card simulation-card">
+                    <div class="api-card-header">
+                        <div class="api-title">
+                            <div class="api-icon simulation-icon">
+                                <i class="fa-solid fa-flask"></i>
+                            </div>
+
+                            <label class="toggle-label">
+                                <input type="checkbox" id="useFake">
+                                <span>Simülasyon Verisi</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <p class="simulation-text">
+                        API bağlantısı kullanılmadığında sistemin test edilmesi için örnek yorum akışı üretir.
+                        Gerçek veri senaryosunda kapalı tutulabilir.
+                    </p>
+
+                    <div class="notice">
+                        <i class="fa-solid fa-lightbulb"></i>
+                        <span>
+                            Simülasyon kaynağı; dashboard, veritabanı, NLP analizi ve risk sınıflandırma
+                            süreçlerini hızlıca test etmek için kullanılabilir.
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="analytics-grid">
+
+            <div class="panel chart-panel">
+                <div class="section-header compact">
+                    <div>
+                        <span class="section-kicker">
+                            <i class="fa-solid fa-chart-simple"></i>
+                            Görselleştirme
+                        </span>
+                        <h2>Duygu Dağılımı</h2>
+                        <p>Toplanan yorumların duygu sınıflandırması.</p>
+                    </div>
+                </div>
+
+                <div class="chart-box">
+                    <canvas id="sentimentChart"></canvas>
+                </div>
+            </div>
+
+            <div class="panel risk-panel" id="risk-panel">
+                <div class="section-header compact">
+                    <div>
+                        <span class="section-kicker">
+                            <i class="fa-solid fa-shield-virus"></i>
+                            Öncelikli İnceleme
+                        </span>
+                        <h2>Yüksek Riskli Yorumlar</h2>
+                        <p>Risk skoru yüksek olan yorumlar burada listelenir.</p>
+                    </div>
+                </div>
+
+                <div id="riskyComments" class="risk-list"></div>
+            </div>
+
+        </section>
+
+        <section class="advanced-analytics-grid">
+
+            <div class="panel mini-chart-panel">
+                <div class="section-header compact">
+                    <div>
+                        <span class="section-kicker">
+                            <i class="fa-solid fa-tags"></i>
+                            Etiket Analizi
+                        </span>
+                        <h2>En Sık Görülen Etiketler</h2>
+                        <p>Yorumlarda en çok tespit edilen konu ve risk etiketleri.</p>
+                    </div>
+                </div>
+
+                <div class="chart-box small-chart">
+                    <canvas id="tagChart"></canvas>
+                </div>
+            </div>
+
+            <div class="panel mini-chart-panel">
+                <div class="section-header compact">
+                    <div>
+                        <span class="section-kicker">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            Risk Dağılımı
+                        </span>
+                        <h2>Risk Seviyesi Dağılımı</h2>
+                        <p>Düşük, orta, yüksek ve kritik riskli yorumların dağılımı.</p>
+                    </div>
+                </div>
+
+                <div class="chart-box small-chart">
+                    <canvas id="riskChart"></canvas>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="advanced-lists-grid">
+
+            <div class="panel user-risk-panel">
+                <div class="section-header compact">
+                    <div>
+                        <span class="section-kicker">
+                            <i class="fa-solid fa-user-shield"></i>
+                            Kullanıcı Bazlı İnceleme
+                        </span>
+                        <h2>Riskli Kullanıcı Analizi</h2>
+                        <p>Olumsuz veya riskli yorum yoğunluğu yüksek kullanıcılar.</p>
+                    </div>
+                </div>
+
+                <div id="userRiskList" class="user-risk-list"></div>
+            </div>
+
+            <div class="panel word-panel">
+                <div class="section-header compact">
+                    <div>
+                        <span class="section-kicker">
+                            <i class="fa-solid fa-font"></i>
+                            Kelime Analizi
+                        </span>
+                        <h2>En Sık Geçen Kelimeler</h2>
+                        <p>Yorumlarda öne çıkan kelimeler ve tekrar sayıları.</p>
+                    </div>
+                </div>
+
+                <div id="wordList" class="word-list"></div>
+            </div>
+
+        </section>
+
+        <section class="panel spam-panel" id="spam-panel">
+            <div class="section-header compact">
+                <div>
+                    <span class="section-kicker">
+                        <i class="fa-solid fa-robot"></i>
+                        Spam / Tekrar Analizi
+                    </span>
+                    <h2>Spam Yorum ve Kullanıcı Tespiti</h2>
+                    <p>
+                        Aynı veya benzer yorumları tekrar eden kullanıcılar ve kopya mesajlar burada listelenir.
+                    </p>
+                </div>
+            </div>
+
+            <div class="spam-grid">
+                <div>
+                    <h3 class="mini-title">
+                        <i class="fa-solid fa-copy"></i>
+                        Tekrarlanan Mesajlar
+                    </h3>
+
+                    <div id="repeatedMessagesList" class="spam-list"></div>
+                </div>
+
+                <div>
+                    <h3 class="mini-title">
+                        <i class="fa-solid fa-user-clock"></i>
+                        Spam Şüpheli Kullanıcılar
+                    </h3>
+
+                    <div id="spamUsersList" class="spam-list"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel table-panel" id="live-comments">
+            <div class="section-header table-header">
+                <div>
+                    <span class="section-kicker">
+                        <i class="fa-solid fa-table-list"></i>
+                        Canlı Akış
+                    </span>
+                    <h2>Canlı Akan Yorumlar</h2>
+                    <p>API veya simülasyon kaynağından alınan son yorumlar.</p>
+                </div>
+
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input
+                        class="search-input"
+                        id="commentSearch"
+                        placeholder="Yorum, kullanıcı veya etikete göre ara..."
+                    >
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <div class="filter-item">
+                    <label>Duygu</label>
+                    <select id="sentimentFilter">
+                        <option value="all">Tümü</option>
+                        <option value="positive">Olumlu</option>
+                        <option value="negative">Olumsuz</option>
+                        <option value="neutral">Nötr</option>
+                    </select>
+                </div>
+
+                <div class="filter-item">
+                    <label>Risk</label>
+                    <select id="riskFilter">
+                        <option value="all">Tümü</option>
+                        <option value="low">Düşük</option>
+                        <option value="medium">Orta</option>
+                        <option value="high">Yüksek</option>
+                        <option value="critical">Kritik</option>
+                    </select>
+                </div>
+
+                <div class="filter-item">
+                    <label>Platform</label>
+                    <select id="platformFilter">
+                        <option value="all">Tümü</option>
+                    </select>
+                </div>
+
+                <div class="filter-item">
+                    <label>Etiket</label>
+                    <select id="tagFilter">
+                        <option value="all">Tümü</option>
+                    </select>
+                </div>
+
+                <div class="filter-item">
+                    <label>Başlangıç Tarihi</label>
+                    <input type="date" id="dateStartFilter">
+                </div>
+
+                <div class="filter-item">
+                    <label>Bitiş Tarihi</label>
+                    <input type="date" id="dateEndFilter">
+                </div>
+
+                <div class="filter-item">
+                    <label>Sıralama</label>
+                    <select id="sortFilter">
+                        <option value="newest">En Yeni</option>
+                        <option value="oldest">En Eski</option>
+                        <option value="risk_desc">Risk Skoru Azalan</option>
+                        <option value="risk_asc">Risk Skoru Artan</option>
+                        <option value="positive_first">Önce Olumlu</option>
+                        <option value="negative_first">Önce Olumsuz</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-secondary filter-reset-btn" id="resetFiltersBtn">
+                    <i class="fa-solid fa-filter-circle-xmark"></i>
+                    Filtreleri Temizle
+                </button>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Zaman</th>
+                        <th>Platform</th>
+                        <th>Kullanıcı</th>
+                        <th>Yorum</th>
+                        <th>Duygu</th>
+                        <th>Risk</th>
+                        <th>Skor</th>
+                        <th>Etiket</th>
+                        <th>Kaynak</th>
+                    </tr>
+                    </thead>
+
+                    <tbody id="commentsTable"></tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+</div>
+
+<script src="/static/app.js?v=93"></script>
+</body>
+</html>
